@@ -26,7 +26,7 @@ public class TestController {
 
     @RequestMapping("/getProperties")
     public String getProperties(){
-        return "Get name from git : " + propname;
+        return "Service B Get name from git : " + propname;
     }
 
 }
