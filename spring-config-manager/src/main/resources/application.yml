@@ -1,0 +1,26 @@
+server:
+  tomcat.uri-encoding: UTF-8
+  port: 8888
+
+spring:
+  application:
+      name: configserver
+  cloud:
+    config:
+      server:
+          git:
+           uri: http://shgit/lf52/KafkaClientTool.git
+           searchPaths: '{application}' #使用占位符来匹配不同的项目的配置文件
+           username: lf52
+           password: 9ol.(OL>
+      label: master
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://10.16.164.31:8881/eureka/ #可以同时注册到多个eureka上，地址用","隔开
+
+management:
+  security:
+    enabled: false  #关闭actuator安全验证
+
