@@ -9,10 +9,10 @@ spring:
     config:
       server:
           git:
-           uri: http://shgit/lf52/KafkaClientTool.git
+           uri: xxxx
            searchPaths: '{application}' #使用占位符来匹配不同的项目的配置文件
-           username: lf52
-           password: 9ol.(OL>
+           username: xxxx
+           password: xxxx
       label: master
 
 eureka:
