@@ -16,7 +16,7 @@ public class MyRemoteEvent<T> extends RemoteApplicationEvent {
     /**
      * @param source 发布事件的对象
      * @param originService 发布者的唯一上下文ID
-     * @param destinationService
+     * @param destinationService refresh指定的client
      * @param message
      */
     public MyRemoteEvent(Object source, String originService, String destinationService, T message) {

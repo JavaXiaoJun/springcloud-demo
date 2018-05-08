@@ -1,0 +1,16 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://10.16.164.31:8881/eureka/ #可以同时注册到多个eureka上，地址用","隔开
+
+
+server:
+  port: 8884
+
+spring:
+  application:
+    name: service-feign
+
+feign:   #开启feign内置的hystrix
+  hystrix:
+    enabled: true
