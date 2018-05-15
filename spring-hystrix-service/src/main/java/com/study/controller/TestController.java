@@ -16,11 +16,20 @@ public class TestController {
     @Autowired
     private HystrixService hystrixService;
 
+    /**
+     * spring cloud hystrix
+     * @return
+     */
     @RequestMapping(value = "/query",method = RequestMethod.GET)
     public String query(){
         return  hystrixService.queryHbase();
     }
 
+    /**
+     * 原生hystrix test
+     * @return
+     * @throws InterruptedException
+     */
     @RequestMapping(value = "/hystrix",method = RequestMethod.GET)
     public String hystrix() throws InterruptedException {
 
