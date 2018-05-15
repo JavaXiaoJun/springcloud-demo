@@ -34,8 +34,7 @@ public class HystrixService {
     }
 
     public String queryHbaseFallback(int num){
-        System.out.println(num + " query hbase time out .");
-        return  " query hbase time out .";
+        return  num + " query hbase time out .";
     }
 
     @HystrixCommand(commandProperties = {
