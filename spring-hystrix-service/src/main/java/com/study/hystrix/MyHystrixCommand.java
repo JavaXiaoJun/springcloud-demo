@@ -34,9 +34,8 @@ public class MyHystrixCommand extends HystrixCommand<String> {
     @Override
     protected String run() throws Exception {
         int num = new Random().nextInt(1000);
-        System.out.println(name + "sleep time : " + num);
+        System.out.println(name + " sleep time : " + num);
         Thread.sleep(num);
-        System.out.println("query datasource success , hi : " + name);
         return  "query datasource success , hi : " + name;
     }
 
@@ -46,7 +45,6 @@ public class MyHystrixCommand extends HystrixCommand<String> {
      */
     @Override
     protected String getFallback(){
-            System.out.println("query datasource time out , fallback : " + name);
             return "query datasource time out , fallback : " + name;
     }
 
