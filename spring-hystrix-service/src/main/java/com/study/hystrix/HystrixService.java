@@ -24,7 +24,7 @@ public class HystrixService {
     public String queryHbase(int num){
 
         try {
-            int i = new Random().nextInt(500);
+            int i = new Random().nextInt(1000);
             System.out.println("sleep time : " + i);
             Thread.sleep(i);
         } catch (InterruptedException e) {
@@ -33,9 +33,6 @@ public class HystrixService {
         return  num + " query hbase success .";
     }
 
-    public String queryHbaseFallback(int num){
-        return  num + " query hbase time out .";
-    }
 
     @HystrixCommand(commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "500"),
@@ -43,7 +40,7 @@ public class HystrixService {
             threadPoolProperties = {
                     @HystrixProperty(name = "coreSize", value = "10"),
                     @HystrixProperty(name = "maxQueueSize", value = "-1")
-            },fallbackMethod = "queryHbaseAsyncFallback")//fallbackMethod=回退时执行的方法
+            },fallbackMethod = "queryHbaseFallback")//fallbackMethod=回退时执行的方法
     public Future<String> queryHbaseAsync(int num) {
 
         return new AsyncResult<String>() {
@@ -60,7 +57,7 @@ public class HystrixService {
 
     }
 
-    public String queryHbaseAsyncFallback(int num){
+    public String queryHbaseFallback(int num){
         return  num + " query hbase time out .";
     }
 

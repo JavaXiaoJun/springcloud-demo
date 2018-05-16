@@ -10,6 +10,13 @@ server:
 spring:
   application:
     name: service-feign
+  zipkin:
+    enabled: true
+    base-url: http://localhost:8887
+  sleuth:
+    enabled: true
+    sampler:
+      percentage: 1  #  默认值为0.1f，现在为了测试设置100%采集
 
 feign:   #开启feign内置的hystrix
   hystrix:
