@@ -9,3 +9,14 @@ server:
 spring:
   application:
     name: zipkin-manager
+  datasource:
+    schema: classpath:/mysql.sql
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://10.16.46.170:3306/spring_cloud_test?useUnicode=true&characterEncoding=utf-8
+    username: test
+    password: test
+    initialize: true #初始化时是否自动创建表
+    continueOnError: true
+  zipkin:
+    storage:
+      type: mysql

@@ -51,11 +51,11 @@
             <artifactId>zipkin-autoconfigure-ui</artifactId>
         </dependency>
         <!-- zipkin 存储到数据库需要引入此类 -->
-       <!-- <dependency>
+        <dependency>
             <groupId>io.zipkin.java</groupId>
             <artifactId>zipkin-autoconfigure-storage-mysql</artifactId>
         </dependency>
-        &lt;!&ndash;保存到数据库需要如下依赖&ndash;&gt;
+        <!--保存到数据库需要如下依赖-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
@@ -64,7 +64,7 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>6.0.6</version>
-        </dependency>-->
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
