@@ -3,9 +3,9 @@ package com.newegg;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.sleuth.zipkin.stream.EnableZipkinStreamServer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import zipkin.server.EnableZipkinServer;
 import zipkin.storage.mysql.MySQLStorage;
 
 import javax.sql.DataSource;
@@ -19,7 +19,7 @@ import javax.sql.DataSource;
  *    3.使用消息队列代替http进行链路通讯（rabbitmq，kafka等）
  */
 @SpringBootApplication
-@EnableZipkinServer
+@EnableZipkinStreamServer //如果使用zipkin-streamjar则使用该注解代替 @EnableZipkinServer
 @EnableDiscoveryClient
 public class ZipkinManager {
 
