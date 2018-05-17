@@ -15,7 +15,7 @@ import javax.sql.DataSource;
  *
  * spring cloud sleuth进阶功能
  *    1.链路数据落地（mysql，es等）
- *    2.在链路数据中添加自定义数据（operator）
+ *    2.在链路数据中添加自定义数据（基于ZuulFilter实现链路自定义数据埋点）
  *    3.使用消息队列代替http进行链路通讯（rabbitmq，kafka等）
  */
 @SpringBootApplication

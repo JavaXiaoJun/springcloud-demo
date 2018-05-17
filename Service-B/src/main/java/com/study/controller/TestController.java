@@ -27,7 +27,7 @@ public class TestController {
      */
     @Value("${server.port}")
     String port;
-    @RequestMapping("/hello")
+    @RequestMapping("/helloworld")
     public String hello(@RequestParam(value = "name") String name) throws InterruptedException {
         System.out.println("******************start***********************");
         int num = new Random().nextInt(500);

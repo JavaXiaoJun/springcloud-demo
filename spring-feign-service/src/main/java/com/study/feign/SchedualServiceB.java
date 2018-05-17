@@ -17,7 +17,7 @@ public interface SchedualServiceB {
      * @param name 接口需要的参数
      * @return
      */
-    @RequestMapping(value = "/hello")
+    @RequestMapping(value = "/helloworld")
     String sayHelloFromClient(@RequestParam(value = "name") String name);
 
 }

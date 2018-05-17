@@ -18,5 +18,8 @@ spring:
     initialize: true #初始化时是否自动创建表
     continueOnError: true
   zipkin:
+    enabled: false #关闭zipkin-server自身的链路调用
     storage:
       type: mysql
+  sleuth:
+    enabled: false #关闭zipkin-server自身的链路调用
