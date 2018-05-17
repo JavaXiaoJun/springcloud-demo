@@ -4,6 +4,7 @@ import com.study.common.model.User;
 import com.study.feign.CommonService;
 import com.study.feign.SchedualServiceB;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,12 +24,14 @@ public class TestController {
     @Autowired
     CommonService commonService;
 
-
+    @Value("${server.port}")
+    String port;
     @Autowired
     private LoadBalancerClient loadBalancerClient;
 
     @RequestMapping(value = "/hello",method = RequestMethod.GET)
     public String sayHi(@RequestParam String name){
+        System.err.println("Service Feign  hello "+name+",i am from port:" +port);
         return schedualServiceb.sayHelloFromClient(name);
     }
 
