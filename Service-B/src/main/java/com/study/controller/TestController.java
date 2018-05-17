@@ -21,6 +21,15 @@ public class TestController {
     @Autowired
     private ApplicationContext context;
 
+    /**
+     * for zuul test
+     * @param name
+     * @return
+     */
+    @RequestMapping("/hello")
+    public String home(@RequestParam String name) {
+        return "Service B hello "+name+",i am from port:" +port;
+    }
 
     /**
      * for test feign param banding

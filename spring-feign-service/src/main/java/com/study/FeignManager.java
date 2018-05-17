@@ -1,11 +1,9 @@
 package com.study;
 
-import com.study.component.ZipkinLinkFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
-import org.springframework.context.annotation.Bean;
 
 /**
  * Created by lf52 on 2018/5/5.
@@ -22,8 +20,4 @@ public class FeignManager {
         SpringApplication.run(FeignManager.class, args);
     }
 
-    @Bean
-    public ZipkinLinkFilter zipkinLinkFilter() {
-        return new ZipkinLinkFilter();
-    }
 }
