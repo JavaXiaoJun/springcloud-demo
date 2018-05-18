@@ -20,6 +20,10 @@ public class RestController {
         return EurekaServerContextHolder.getInstance().getServerContext();
     }
 
+    /**
+     * 所有获取注册的服务
+     * @return
+     */
     @RequestMapping(value="/getRegistryApps",method= RequestMethod.GET)
     @ResponseBody
     public List<Application> getRegistryApps(){

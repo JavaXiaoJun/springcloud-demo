@@ -1,8 +1,9 @@
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://10.16.164.31:8881/eureka/ #可以同时注册到多个eureka上，地址用","隔开
-
+      defaultZone: http://10.16.164.31:8881/eureka/ #可以同时注册到多个eureka上，地址用","隔开。 还可以自己配置region（地域）与zone（可用区）
+    fetch-registry: true #是否去发现服务
+    registry-fetch-interval-seconds: 30 #发现服务的时间间隔（默认30s）
 
 info:                #actuator监控自定义info
   app:
