@@ -2,15 +2,15 @@ package com.study;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * Created by lf52 on 2018/5/2.
  */
 @SpringBootApplication
-@EnableEurekaClient
-@RestController
+@EnableDiscoveryClient
+@ComponentScan(basePackages={"com.study.dao","com.newegg.ec.core"})
 public class ServiceAApplication {
 
     public static void main(String[] args) {

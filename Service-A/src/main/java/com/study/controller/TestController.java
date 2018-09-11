@@ -1,8 +1,6 @@
 package com.study.controller;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -11,12 +9,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
 
-    @Value("${server.port}")
-    String port;
+  /*  @Value("${server.port}")
+    String port;*/
 
     @RequestMapping("/hello")
-    public String home(@RequestParam String name) {
-        return "Service A hello "+name+",i am from port:" +port;
+    public String home() {
+
+        return "Service A hello leo,i am from port:" + 8222;
     }
 
 }

@@ -50,16 +50,18 @@ public class TestController {
     public String queryAnysc(){
 
         //模拟并发为15个request的场景，我们hystrix池大小为10，因此有5个请求会快速响应失败
-        int count =15;
+        int count =5;
         while (count > 0){
             int num = count--;
             new Thread(() -> {
                 try {
                     List<Future<String>> futureList = new ArrayList();
                     futureList.add(hystrixService.queryHbaseAsync(num));
+                    futureList.add(hystrixService.queryHbaseAsync(num));
+                    futureList.add(hystrixService.queryHbaseAsync(num));
                     futureList.forEach(future -> {
                         try {
-                            System.out.println(future.get());
+                            System.out.println(Thread.currentThread().getName()+" : "+future.get());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -99,7 +101,7 @@ public class TestController {
                             }
                         });
                     }catch (Exception ex){
-                         System.out.println("Exception:"+ex.getMessage()+" name=" + "leo"+num);
+                         System.out.println("Exception:"+ex.getMessage()+" name=" + "leo" + num);
                     }
                 }).start();
          }

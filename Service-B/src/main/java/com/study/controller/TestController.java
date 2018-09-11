@@ -59,11 +59,10 @@ public class TestController {
     /**
      * for test spring config
      */
-    @Value("${propname}")
-    String propname;
+
     @RequestMapping("/getProperties")
     public String getProperties(){
-        return "Service B : " + port +" Get name from git : " + propname;
+        return "Service B : " + port +" Get name from git : " ;
     }
 
     /**
