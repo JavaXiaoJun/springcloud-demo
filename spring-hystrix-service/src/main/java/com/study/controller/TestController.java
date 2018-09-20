@@ -1,5 +1,7 @@
 package com.study.controller;
 
+import com.study.hystrix.HystrixHandler;
+import com.study.hystrix.HystrixParam;
 import com.study.hystrix.HystrixService;
 import com.study.hystrix.MyHystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Future;
 
 /**
@@ -92,10 +95,28 @@ public class TestController {
                         List<Future<String>> futureList = new ArrayList(10);
                         //String result = new MyHystrixCommand("leo"+num).execute();//同步阻塞的方式执行
                         //异步非堵塞的方式执行
-                        futureList.add(new MyHystrixCommand("leo" + num).queue());
+                        futureList.add(new MyHystrixCommand<String>(new HystrixHandler() {
+                            @Override
+                            public String run() throws Exception {
+                                String name = Thread.currentThread().getName();
+                                int num = new Random().nextInt(1000);
+                                Thread.sleep(num);
+                                System.out.println(name + " sleep time : " + num);
+                                System.out.println(name + " query datasource success , hi : leo");
+                                return name + " query datasource success , hi : leo";
+                            }
+
+                            @Override
+                            public String fallback() {
+                                   String name = Thread.currentThread().getName();
+                                   System.out.println(name + " query datasource time out , fallback : leo");
+                                   return name + " query datasource time out , fallback : leo";
+                            }
+                        },new HystrixParam()).queue());
+
                         futureList.forEach(future -> {
                             try {
-                                System.out.println(future.get());
+                               future.get();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
