@@ -1,0 +1,149 @@
+Hystrix
+
+  1.简介：Hystrix 是一款延迟和容错库，目的是用来隔离远程系统、服务和第三方库的调用以及停止故障传播，并在无法完全避免发生故障的复杂的分布式系统中实现切换备用调用。
+        Hystrix 主要作用：
+             隔离（线程隔离、信号量隔离）：主要是限制调用分布式服务的资源，避免个别服务出现问题时对其他服务产生影响
+             熔断：当失败率到达一定阈值时，熔断器触发快速失败
+             降级（超时降级、熔断降级）：触发降级时可以使用回调方法返回托底数据
+             缓存：请求缓存、请求合并
+             实时监控
+             报警
+
+  2.应用：目前可以使用Netflix 原生的 Hystrix,也可以使用 Spring 封装的 spring-cloud-netflix-hystirx(注解形式配置)
+          1.HystrixCommand 执行方式有 execute()、queue()等四种
+            execute()：以同步堵塞方式执行 run()。调用 execute() 后，hystrix 先创建一个新线程运行 run()，接着调用程序要在 execute() 调用处一直堵塞着，直到 run() 运行完成。
+                       但其实翻看源码，我们可以发现，execute() 是调用了queue().get()。
+            queue()：以异步非堵塞方式执行 run()。调用 queue() 就直接返回一个Future对象，同时 hystrix 创建一个新线程运行 run()，调用程序通过 Future.get() 拿到run() 的返回结果，
+                       而 Future.get() 是堵塞执行的。
+
+          2.部分参数介绍
+            CommandKey:     依赖命名，每个CommandKey代表一个依赖抽象，相同的依赖要使用相同的CommandKey名称。依赖隔离的根本就是对相同CommandKey的依赖做隔离。
+            CommandGroup:   依赖分组，命令分组用于对依赖操作分组,便于统计,汇总等。CommandGroup是每个命令最少配置的必选参数，在不指定ThreadPoolKey的情况下，字面值用于对不同依赖的线程池/信号区分。
+            ThreadPoolKey:  线程池/信号，当对同一业务依赖做隔离时使用CommandGroup做区分，但是对同一依赖的不同远程调用，例如一个是redis，一个是http，可以使用HystrixThreadPoolKey做隔离区分。
+                            即最然在业务上都是相同的组，但是需要在资源上做隔离时，是可以使用HystrixThreadPoolKey区分。Hystrix 用来执行 getFallback() 方法所使用的线程同执行 run()
+                            方法使用的线程是来自同一个线程池。
+
+                            /**
+                            * Command execution properties.
+                            */
+                            # 隔离策略，默认是线程隔离，还有信号量隔离，参见枚举：ExecutionIsolationStrategy
+                            hystrix.command.default.execution.isolation.strategy=THREAD
+                            # 隔离线程超时时间，默认1s
+                            hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=1000
+                            # 是否启用超时配置
+                            hystrix.command.default.execution.timeout.enabled=true
+                            # 超时的时候是否中断隔离线程
+                            hystrix.command.default.execution.isolation.thread.interruptOnTimeout=true
+                            # 隔离线程正在执行取消操作时是否中断
+                            hystrix.command.default.execution.isolation.thread.interruptOnFutureCancel=false
+                            # 隔离策略的最大信号量，只有使用信号量隔离策略时生效
+                            hystrix.command.default.execution.isolation.semaphore.maxConcurrentRequests=10
+
+                            /**
+                            * Command fallback properties.HystrixCommand.getFallback()
+                            */
+                            # 降级方法的最大调用线程数，如果超出此信号量，会抛出异常
+                            hystrix.command.default.fallback.isolation.semaphore.maxConcurrentRequests=10
+                            # 是否启用降级
+                            hystrix.command.default.fallback.enabled=true
+
+
+                            /**
+                            * Thread pool properties.
+                            */
+                            # 是否启用maximumSize配置
+                            hystrix.threadpool.default.allowMaximumSizeToDivergeFromCoreSize=false
+                            # 线程数量
+                            hystrix.threadpool.default.coreSize=10
+                            # 最大执行线程数
+                            hystrix.threadpool.default.maximumSize=10
+                            # 线程存活毫秒数
+                            hystrix.threadpool.default.keepAliveTimeMinutes=1
+                            # 最大等待线程队列，如果-1为SynchronousQueue；其他则为LinkedBlockingQueue
+                            hystrix.threadpool.default.maxQueueSize=-1
+                            # 拒绝队列大小，即使maxQueueSize没有达到，达到queueSizeRejectionThreshold该值后，请求也会被拒绝。当maxQueueSize为-1，则该属性不可用
+                            hystrix.threadpool.default.queueSizeRejectionThreshold=5
+                            # 线程池统计时间窗口值
+                            hystrix.threadpool.default.metrics.rollingStats.timeInMilliseconds=10000
+                            # 线程池统计时间窗口内分成的份数
+                            hystrix.threadpool.default.metrics.rollingStats.numBuckets=10
+
+
+                            /**
+                            * Command circuit breaker properties.
+                            */
+                            # 是否启用断路器
+                            hystrix.command.default.circuitBreaker.enabled=true
+                            # 请求量阈值，请求量达到该值是会开启断路器
+                            hystrix.command.default.circuitBreaker.requestVolumeThreshold=20
+                            # 当断路器打开后，会直接拒绝请求，此时间是配置多长时候后再次尝试处理请求
+                            hystrix.command.default.circuitBreaker.sleepWindowInMilliseconds=5000
+                            # 打开断路器并走回退逻辑的错误率，默认50%
+                            hystrix.command.default.circuitBreaker.errorThresholdPercentage=50
+                            # 是否强制打开断路器，打开后会直接拒绝所有请求
+                            hystrix.command.default.circuitBreaker.forceOpen=false
+                            # 是否强制关闭断路器，关闭后会处理所有请求
+                            hystrix.command.default.circuitBreaker.forceClosed=false
+
+
+                            /**
+                            * Command metrics properties.主要用于统计执行情况
+                            */
+                            # 统计的时间窗口值
+                            hystrix.command.default.metrics.rollingStats.timeInMilliseconds=10000
+                            # 统计时间窗口内分成的份数，需要保证timeInMilliseconds % numBuckets == 0
+                            hystrix.command.default.metrics.rollingStats.numBuckets=10
+
+            3.关于异常触发fallback
+               什么情况下会触发 fallback？
+                    1.主方法抛出异常
+                      通常，当 HystrixCommand 的主方法（run()） 中抛出异常时，便会触发 getFallback()。除了一个例外 —— HystrixBadRequestException。当抛出 HystrixBadRequestException，不论当前 Command 是否定义了 getFallback()，都不会触发，而是向上抛出异常。
+                    2.主方法执行超时
+                      这种情况也很容易理解，在 Hystrix 中，执行超时也是失败的一种，所以同样也会触发 Fallback。
+                    3.线程池拒绝
+                      线程池拒绝指的是 HystrixCommand 所使用的线程池没有足够的线程执行本次调用。Hystrix 使用的线程池的队列大小默认为 -1。此时，队列类型为 SynchronousQueue。当线程数不足时，任务会就被拒绝。这种情况也算是一种执行失败，所以也会触发 Fallback。
+                    4.断路器打开
+                      当断路器打开时，Hystrix 会直接执行 Fallback，而不会执行主方法。
+
+               触发fallback以后执行它的线程
+                    1.run()执行过程中出现错误以及超时
+                      执行一个Command时，Hystrix会注册一个相应Timer到一个定时线程池中，当超时或者执行抛出异常后会启用一个HystrixTimer线程来终止的执行，并且执行相应的fallback逻辑。
+                      定时线程池的管理是用ThreadPoolExecutor来实现的，当线程池和阻塞队列都满后会抛出RejectedExecutionException，捕获该异常并进行相应状态的处理。
+                    2.断路器熔断
+                      当断路器打开以后,Hystrix会直接执行Fallback,而不会执行主方法。此时Fallback逻辑就是由Hystrix Command的ThreadPool来执行的，该线程池的配置即是我们在构造Command时指定的。
+                    3.线程池拒绝
+                      线程池拒绝指的是HystrixCommand所使用的线程池包括配置的缓冲队列满了以后，没有足够的线程执行本次调用，此时fallback是由主线程调用的。它类似于我们的ThreadPoolExecutor，
+                      当缓冲队列满了以后交由主线程执行RejectedExecutionHandler。
+
+               参考 ：https://www.jianshu.com/p/88a6c0c764f4
+
+  3.Hystrix 线程隔离概述
+        相信大家对于 Docker 的“舱壁模式”并不陌生，Hystrix 则是使用了该模式现实了线程池的隔离，我们可以为每个依赖服务创建一个独立的线程池，每个线程池之间不会互相影响。
+        每个 HystrixCommand 都会运行在相对应的线程池中，这样我们就能针对不同的服务可以很好的控制 Command 的并发量。 Hystrix 线程池默认是以相同命令组区分，如果需要自定义线程隔离，
+        可使用 ThreadPoolKey 参数指定线程池的划分。Hystrix 源码中是将 ThreadPoolKey 和 HystrixThreadPool 存储在一个 ConcurrentHashMap 中，如果我们想将某些命令放在同一个线程池中执行时，
+        我们仅需要指定相同的 ThreadPoolKey 即可。
+
+        // HystrixThreadPool 源码
+        /* * Use the String from HystrixThreadPoolKey.name() instead of the HystrixThreadPoolKey instance as it's just an interface and we can't ensure the object * we receive implements hashcode/equals correctly and do not want the default hashcode/equals which would create a new threadpool for every object we get even if the name is the same */
+
+        final static ConcurrentHashMap<String, HystrixThreadPool> threadPools = new ConcurrentHashMap<String, HystrixThreadPool>();
+
+        static HystrixThreadPool getInstance(HystrixThreadPoolKey threadPoolKey, HystrixThreadPoolProperties.Setter propertiesBuilder) {
+            // get the key to use instead of using the object itself so that if people forget to implement equals/hashcode things will still work
+            String key = threadPoolKey.name();
+
+            // this should find it for all but the first time
+            HystrixThreadPool previouslyCached = threadPools.get(key);
+            if (previouslyCached != null) {
+                return previouslyCached;
+            }
+
+            // if we get here this is the first time so we need to initialize
+            synchronized (HystrixThreadPool.class) {
+                if (!threadPools.containsKey(key)) {
+                    threadPools.put(key, new HystrixThreadPoolDefault(threadPoolKey, propertiesBuilder));
+                }
+            }
+            return threadPools.get(key);
+        }
+
