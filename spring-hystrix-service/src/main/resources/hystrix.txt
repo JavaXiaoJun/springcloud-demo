@@ -147,3 +147,7 @@ Hystrix
             return threadPools.get(key);
         }
 
+
+     一个相当有用的tips ：fallback逻辑应该只包含通用的回应信息，这些回应从内存缓存中或者其他固定逻辑中得到，而不应有任何的网络依赖。如果一定要在失败回退逻辑中包含网络请求，必须将这些网络请求包装在另一个 HystrixCommand中。为什么？
+                         因为fallback的超时时间不受控制的，run()执行过程中出现错误以及超时fallback是由HystrixTimer线程池来执行，这个池的大小取决于你的cpu核心数，在并发很高的情况下(断路器还未打开前)，HystrixTimer线程池很容易被塞满，同ThreadPoolExecutor一样，此时主线程会开始执行拒绝策略，进而堵塞我们的主线程。
+                         当然这一切会在断路器打开以后消失。
